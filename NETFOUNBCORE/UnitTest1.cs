@@ -140,7 +140,7 @@ namespace NETFOUNB.Tests
 
             using (var writer = new StreamWriter(buffer))
             {
-                for (int i = 0; i < 1000000000; i++)
+                for (int i = 0; i < 10000000; i++)
                 {
                     writer.Write("hoi");
                 }
