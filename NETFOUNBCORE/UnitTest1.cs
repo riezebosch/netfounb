@@ -157,11 +157,11 @@ namespace NETFOUNB.Tests
                 watcher.Created += CreatedEventHandler;
                 watcher.EnableRaisingEvents = true;
 
-                var path = Path.ChangeExtension(Path.GetTempFileName(), "txt");
+                var path = Path.Combine(watcher.Path, $"{Guid.NewGuid()}.txt");
                 File.WriteAllText(path, "watcher demo");
             }
 
-            Assert.True(_isAangeroepen.WaitOne(TimeSpan.FromMinutes(5)));
+            Assert.True(_isAangeroepen.WaitOne(TimeSpan.FromSeconds(5)));
         }
 
         private void CreatedEventHandler(object sender, FileSystemEventArgs e)
