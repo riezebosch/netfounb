@@ -3,12 +3,19 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Text;
 using System.IO.Compression;
+using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace NETFOUNB.Tests
 {
     [TestClass]
     public class UnitTest1
     {
+        private ManualResetEvent _isAangeroepen = new ManualResetEvent(false);
+
         [TestMethod]
         public void TestMethod1()
         {
@@ -139,6 +146,113 @@ namespace NETFOUNB.Tests
                     writer.Write("hoi");
                 }
             }
+        }
+
+        [TestMethod]
+        public void FileSystemWatcherDemo()
+        {
+            using (var watcher = new FileSystemWatcher(Path.GetTempPath()))
+            {
+                watcher.NotifyFilter = NotifyFilters.FileName;
+                watcher.Filter = "*.txt";
+                watcher.Created += CreatedEventHandler;
+                watcher.EnableRaisingEvents = true;
+
+                var path = Path.ChangeExtension(Path.GetTempFileName(), "txt");
+                File.WriteAllText(path, "watcher demo");
+            }
+
+            Assert.IsTrue(_isAangeroepen.WaitOne(TimeSpan.FromMinutes(5)));
+        }
+
+        private void CreatedEventHandler(object sender, FileSystemEventArgs e)
+        {
+            _isAangeroepen.Set();
+        }
+
+
+
+        [TestMethod]
+        public void SerializatieDemo()
+        {
+            string path = "binary-serializer.bin";
+            using (var stream = File.OpenWrite(path))
+            {
+                Persoon p = CreatePersoon();
+
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(stream, p);
+            }
+
+            using (var stream = File.OpenRead(path))
+            {
+                var formatter = new BinaryFormatter();
+                var p = (Persoon)formatter.Deserialize(stream);
+
+                Assert.AreEqual("Pietje Puk", p.Naam);
+                Assert.IsNotNull(p.Vrienden);
+                Assert.AreEqual(p.Vrienden[0].Naam, "Agent Langdraad");
+            };
+        }
+
+        private static Persoon CreatePersoon()
+        {
+            return new Persoon
+            {
+                Naam = "Pietje Puk",
+                Vrienden = new[]
+                {
+                        new Persoon
+                        {
+                            Naam = "Agent Langdraad"
+                        }
+                    }
+            };
+        }
+
+        [TestMethod]
+        public void XmlSerializerDemo()
+        {
+            string path = "binary-serializer.xml";
+            using (var stream = File.OpenWrite(path))
+            {
+                var serializer = new XmlSerializer(typeof(Persoon));
+                serializer.Serialize(stream, CreatePersoon());
+            }
+        }
+
+        [TestMethod]
+        public void JsonSerializerDemo()
+        {
+            string path = "binary-serializer.json";
+            var stream = File.OpenWrite(path);
+
+            using (var writer = new StreamWriter(stream))
+            {
+                var serializer = new JsonSerializer();
+                serializer.Serialize(writer, CreatePersoon());
+            }
+        }
+
+        [TestMethod]
+        public void DataContractSerializer()
+        {
+            string path = "binary-serializer.wcf";
+            using (var stream = File.OpenWrite(path))
+            { 
+                var serializer = new DataContractSerializer(typeof(Persoon));
+                serializer.WriteObject(stream, CreatePersoon());
+            }
+        }
+
+        [Serializable]
+        [XmlRoot("persoon")]
+        public class Persoon
+        {
+            [XmlElement(ElementName = "naam")]
+            public string Naam { get; set; }
+            [XmlElement("persoon")]
+            public Persoon[] Vrienden { get; set; }
         }
     }
 }
