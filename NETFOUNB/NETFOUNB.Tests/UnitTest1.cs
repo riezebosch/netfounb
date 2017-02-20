@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Text;
+using System.IO.Compression;
 
 namespace NETFOUNB.Tests
 {
@@ -91,6 +92,52 @@ namespace NETFOUNB.Tests
             {
                 var text = reader.ReadToEnd();
                 Assert.AreEqual("hallo memory", text);
+            }
+        }
+
+        [TestMethod]
+        public void UsingStatementDemo1()
+        {
+            var stream = File.OpenWrite("stream-demo.txt");
+            var writer = new StreamWriter(stream);
+            try
+            {
+                writer.Write("hoi");
+                throw new Exception();
+            }
+            finally
+            {
+                if (writer != null)
+                {
+                    writer.Dispose();
+                }
+            }
+        }
+
+        [TestMethod]
+        public void UsingStatementDemo2()
+        {
+            var stream = File.OpenWrite("stream-demo.txt");
+            using (var writer = new StreamWriter(stream))
+            {
+                writer.Write("hoi");
+                throw new Exception();
+            }
+        }
+
+        [TestMethod]
+        public void StreamsInStreamsDemo()
+        {
+            var stream = File.OpenWrite("compressed.bin");
+            var zip = new GZipStream(stream, CompressionMode.Compress);
+            var buffer = new BufferedStream(zip);
+
+            using (var writer = new StreamWriter(buffer))
+            {
+                for (int i = 0; i < 1000000000; i++)
+                {
+                    writer.Write("hoi");
+                }
             }
         }
     }
