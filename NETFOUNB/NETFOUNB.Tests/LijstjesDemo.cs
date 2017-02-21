@@ -153,6 +153,11 @@ namespace NETFOUNB.Tests
 
             // Maar zo
             items.ForEach(i => Console.WriteLine(i));
+            bool iserookeenkleinerdan0 = items.Any(p => p < 0);
+            Assert.IsFalse(iserookeenkleinerdan0);
+
+            bool allesgroterdan0 = items.All(p => p >= 0);
+            Assert.IsTrue(allesgroterdan0);
 
             // Misschien ten overvloede
             var ditisnietwatjeverwacht = items.ToString();
