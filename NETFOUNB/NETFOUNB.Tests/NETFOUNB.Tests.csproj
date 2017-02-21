@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="EnumerateAllFilesDemo.cs" />
     <Compile Include="FileIODemo.cs" />
+    <Compile Include="LijstjesDemo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
