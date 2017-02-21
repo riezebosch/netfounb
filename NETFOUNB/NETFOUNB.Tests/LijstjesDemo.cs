@@ -140,6 +140,28 @@ namespace NETFOUNB.Tests
             Assert.AreEqual(23, metcomparer[new MyKey2 { Property1 = "Pietje" }]);
          }
 
+        [TestMethod]
+        public void HandigeDelegateMethodeOpList()
+        {
+            var items = new List<int> { 123, 23, 234, 234, 234 };
+
+            // Niet zo
+            foreach (var item in items)
+            {
+                Console.WriteLine(item);
+            }
+
+            // Maar zo
+            items.ForEach(i => Console.WriteLine(i));
+
+            // Misschien ten overvloede
+            var ditisnietwatjeverwacht = items.ToString();
+            Assert.AreNotEqual("123, 23, 234, 234, 234", ditisnietwatjeverwacht);
+
+            var ditiskorterdanforeachen = string.Join(", ", items);
+            Assert.AreEqual("123, 23, 234, 234, 234", ditiskorterdanforeachen);
+        }
+
         private class MyKey
         {
             public int Property2 { get; internal set; }
@@ -178,6 +200,37 @@ namespace NETFOUNB.Tests
             public int GetHashCode(MyKey2 obj)
             {
                 return obj.Property1.GetHashCode();
+            }
+        }
+
+        [TestMethod]
+        public void VoorbeeldjeVanEenOneindigeLijst()
+        {
+            foreach (var item in Fib())
+            {
+                if (item > 1000)
+                {
+                    break;
+                }
+                Console.WriteLine(item);
+            }
+        }
+
+        IEnumerable<int> Fib()
+        {
+            int a = 0;
+            yield return a;
+
+            int b = 1;
+            yield return b;
+
+            while (true)
+            {
+                var t = a + b;
+                yield return t;
+
+                a = b;
+                b = t;
             }
         }
     }
