@@ -70,6 +70,7 @@ namespace NETFOUNB.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(Exception))]
         public void StreamsDemo()
         {
             string path = "stream-demo.txt";
@@ -103,6 +104,7 @@ namespace NETFOUNB.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(Exception))]
         public void UsingStatementDemo1()
         {
             var stream = File.OpenWrite("stream-demo.txt");
@@ -122,6 +124,7 @@ namespace NETFOUNB.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(Exception))]
         public void UsingStatementDemo2()
         {
             var stream = File.OpenWrite("stream-demo.txt");
@@ -141,7 +144,7 @@ namespace NETFOUNB.Tests
 
             using (var writer = new StreamWriter(buffer))
             {
-                for (int i = 0; i < 1000000000; i++)
+                for (int i = 0; i < 1000000; i++)
                 {
                     writer.Write("hoi");
                 }
