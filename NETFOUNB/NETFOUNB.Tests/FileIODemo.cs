@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace NETFOUNB.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class FileIODemo
     {
         private ManualResetEvent _isAangeroepen = new ManualResetEvent(false);
 
