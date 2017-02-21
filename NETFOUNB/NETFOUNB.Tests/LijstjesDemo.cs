@@ -140,6 +140,11 @@ namespace NETFOUNB.Tests
             Assert.AreEqual(23, metcomparer[new MyKey2 { Property1 = "Pietje" }]);
          }
 
+        public void DezeVoldoetAanDeSignatuurVanDeForeachMethodeOpMijnList(int i)
+        {
+
+        }
+
         [TestMethod]
         public void HandigeDelegateMethodeOpList()
         {
@@ -153,6 +158,15 @@ namespace NETFOUNB.Tests
 
             // Maar zo
             items.ForEach(i => Console.WriteLine(i));
+
+            items.ForEach(new Action<int>(DezeVoldoetAanDeSignatuurVanDeForeachMethodeOpMijnList));
+            items.ForEach(DezeVoldoetAanDeSignatuurVanDeForeachMethodeOpMijnList);
+            items.ForEach(delegate (int i) { Console.WriteLine(i); });
+            items.ForEach((int i) => { Console.WriteLine(i); });
+            items.ForEach(i => { Console.WriteLine(i); });
+            items.ForEach(i => Console.WriteLine(i));
+            items.ForEach(Console.WriteLine);
+
             bool iserookeenkleinerdan0 = items.Any(p => p < 0);
             Assert.IsFalse(iserookeenkleinerdan0);
 
@@ -165,6 +179,42 @@ namespace NETFOUNB.Tests
 
             var ditiskorterdanforeachen = string.Join(", ", items);
             Assert.AreEqual("123, 23, 234, 234, 234", ditiskorterdanforeachen);
+        }
+
+        [TestMethod]
+        public void HoeKijkJeOfEenDoubleDecimalenBevat()
+        {
+            decimal a = 3.0m;
+            Assert.IsFalse(HeeftDecimalen(a));
+
+            decimal b = 3.1m;
+            Assert.IsTrue(HeeftDecimalen(b));
+        }
+
+        [TestMethod]
+        public void WatIsZoUniekAanEenDecimal()
+        {
+            decimal a = 100002m / 3;
+            Assert.AreEqual(100002m, a * 3);
+        }
+
+        [TestMethod]
+        public void DoubleVoorbeeld()
+        {
+            double a = 0.1,
+                b = 0.2,
+                c = a + b;
+            Assert.AreNotEqual(0.3, c);
+
+            decimal d = 0.1m,
+                e = 0.2m,
+                f = d + e;
+            Assert.AreEqual(0.3m, f);
+        }
+
+        private bool HeeftDecimalen(decimal a)
+        {
+            return (a % 1) != 0;
         }
 
         private class MyKey
