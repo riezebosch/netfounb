@@ -11,9 +11,9 @@ using Xunit;
 
 namespace NETFOUNB.Tests
 {
-    public class UnitTest1
+    public class UnitTest1 : IDisposable
     {
-        private ManualResetEvent _isAangeroepen = new ManualResetEvent(false);
+        private ManualResetEventSlim _isAangeroepen = new ManualResetEventSlim(false);
 
         [Fact]
         public void Fact1()
@@ -27,16 +27,19 @@ namespace NETFOUNB.Tests
         [Fact]
         public void FileInfoClass()
         {
-            var fi = new FileInfo("NETFOUNB.Tests.dll");
+            var path = Guid.NewGuid().ToString();
+            File.Create(path);
+
+            var fi = new FileInfo(path);
 
             Assert.True(fi.Exists);
-            Assert.True(File.Exists("NETFOUNB.Tests.dll"));
+            Assert.True(File.Exists(path));
         }
 
         [Fact]
         public void DirectoryInfoClassDemo()
         {
-            var di = new DirectoryInfo($@"C:\git");
+            var di = new DirectoryInfo(".");
             di.GetFiles("*.*", SearchOption.AllDirectories);
 
             di.GetFiles();
@@ -45,8 +48,7 @@ namespace NETFOUNB.Tests
         [Fact]
         public void PathClassDemo()
         {
-            
-            Path.Combine(@"C:\git", "output.log");
+            Path.Combine(Directory.GetDirectoryRoot("."), "output.log");
             var path = Path.ChangeExtension("input.zip", "bak");
 
             Assert.Equal("input.bak", path);
@@ -75,12 +77,15 @@ namespace NETFOUNB.Tests
 
             File.Delete(path);
 
-            var stream = File.OpenWrite(path);
-            using (var writer = new StreamWriter(stream))
+            Assert.ThrowsAsync<Exception>(() => 
             {
-                writer.Write("hoi");
-                throw new Exception();
-            }
+                var stream = File.OpenWrite(path);
+                using (var writer = new StreamWriter(stream))
+                {
+                    writer.Write("hoi");
+                    throw new Exception();
+                }
+            });
         }
 
         [Fact]
@@ -109,7 +114,7 @@ namespace NETFOUNB.Tests
             try
             {
                 writer.Write("hoi");
-                throw new Exception();
+                //throw new Exception();
             }
             finally
             {
@@ -127,7 +132,7 @@ namespace NETFOUNB.Tests
             using (var writer = new StreamWriter(stream))
             {
                 writer.Write("hoi");
-                throw new Exception();
+                //throw new Exception();
             }
         }
 
@@ -155,13 +160,18 @@ namespace NETFOUNB.Tests
                 watcher.NotifyFilter = NotifyFilters.FileName;
                 watcher.Filter = "*.txt";
                 watcher.Created += CreatedEventHandler;
+                watcher.Changed += CreatedEventHandler;
+                watcher.Renamed += CreatedEventHandler;
+
                 watcher.EnableRaisingEvents = true;
 
                 var path = Path.Combine(watcher.Path, $"{Guid.NewGuid()}.txt");
                 File.WriteAllText(path, "watcher demo");
+
+                Thread.Sleep(1000);
             }
 
-            Assert.True(_isAangeroepen.WaitOne(TimeSpan.FromSeconds(5)));
+            Assert.True(_isAangeroepen.WaitHandle.WaitOne(TimeSpan.FromSeconds(5)));
         }
 
         private void CreatedEventHandler(object sender, FileSystemEventArgs e)
@@ -209,16 +219,16 @@ namespace NETFOUNB.Tests
             };
         }
 
-        // [Fact]
-        // public void XmlSerializerDemo()
-        // {
-        //     string path = "binary-serializer.xml";
-        //     using (var stream = File.OpenWrite(path))
-        //     {
-        //         var serializer = new XmlSerializer(typeof(Persoon));
-        //         serializer.Serialize(stream, CreatePersoon());
-        //     }
-        // }
+        [Fact]
+        public void XmlSerializerDemo()
+        {
+            string path = "binary-serializer.xml";
+            using (var stream = File.OpenWrite(path))
+            {
+                var serializer = new XmlSerializer(typeof(Persoon));
+                serializer.Serialize(stream, CreatePersoon());
+            }
+        }
 
         [Fact]
         public void JsonSerializerDemo()
@@ -231,6 +241,11 @@ namespace NETFOUNB.Tests
                 var serializer = new JsonSerializer();
                 serializer.Serialize(writer, CreatePersoon());
             }
+        }
+
+        public void Dispose()
+        {
+            _isAangeroepen.Dispose();
         }
 
         // [Fact]
