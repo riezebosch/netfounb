@@ -51,6 +51,10 @@ namespace PerformanceCountersDemo
             return counters;
         }
 
+        /// <summary>
+        /// Doe dit normaalgesproken NIET vanuit code
+        /// maar gebruik hiervoor een installer.
+        /// </summary>
         private static void CreatePerformanceCounters()
         {
             if (!PerformanceCounterCategory.Exists("demo"))

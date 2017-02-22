@@ -40,5 +40,11 @@ namespace NETFOUNB.Tests
             var text = File.ReadAllText(path);
             Assert.AreNotEqual(text, original, "De tekst is niet aangepast");
         }
+
+        [TestMethod]
+        public void NLogDemo()
+        {
+
+        }
     }
 }
