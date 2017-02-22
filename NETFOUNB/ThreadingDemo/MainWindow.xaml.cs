@@ -29,17 +29,17 @@ namespace ThreadingDemo
         object _lock = new object();
         private int i;
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private async void button_Click(object sender, RoutedEventArgs e)
         {
-            Task.Run(() => DureBerekening())
-                .ContinueWith(t => label.Content = "Thread is klaar", TaskScheduler.FromCurrentSynchronizationContext());
+            int i = await FunctieAsync();
+        }
 
-            lock (_lock)
-            {
-                Methode(i);
-                i++;
-            }
+        private async Task<int> FunctieAsync()
+        {
+            await Task.Run(() => DureBerekening());
+            label.Content = "Thread is klaar";
 
+            return 3;
         }
 
         private void Methode(int i)

@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 
 namespace NETFOUNB.Tests
 {
@@ -86,7 +87,7 @@ namespace NETFOUNB.Tests
         }
 
         [TestMethod]
-        public void MemoryStreamDemo()
+        public async Task MemoryStreamDemo()
         {
             var stream = new MemoryStream();
             using (var writer = new StreamWriter(stream, Encoding.UTF8, 1024, true))
@@ -98,7 +99,7 @@ namespace NETFOUNB.Tests
 
             using (var reader = new StreamReader(stream))
             {
-                var text = reader.ReadToEnd();
+                var text = await reader.ReadToEndAsync();
                 Assert.AreEqual("hallo memory", text);
             }
         }
