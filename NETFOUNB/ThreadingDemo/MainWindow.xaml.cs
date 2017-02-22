@@ -31,12 +31,10 @@ namespace ThreadingDemo
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-            var t = new Thread(DureBerekening);
-            t.IsBackground = true;
+            Task.Run(() => DureBerekening())
+                .ContinueWith(t => label.Content = "Thread is klaar", TaskScheduler.FromCurrentSynchronizationContext());
 
-            t.Start();
-
-            lock(_lock)
+            lock (_lock)
             {
                 Methode(i);
                 i++;
@@ -65,7 +63,6 @@ namespace ThreadingDemo
             }
 
             Thread.Sleep(5000);
-            Dispatcher.Invoke(() => label.Content = "Thread is klaar");
         }
     }
 }
