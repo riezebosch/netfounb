@@ -75,6 +75,7 @@
     <Compile Include="RegexDemo.cs" />
     <Compile Include="MonitoringProcesses.cs" />
     <Compile Include="DebugAndTrace.cs" />
+    <Compile Include="ReflectionAndAttributesDemo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NETFOUNB\NETFOUNB.csproj">
