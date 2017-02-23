@@ -2,8 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NETFOUNB.Tests
@@ -127,7 +129,7 @@ namespace NETFOUNB.Tests
 
         [TestMethod]
         public void DictionaryMetEigenKeys()
-        { 
+        {
             var eigenkey = new Dictionary<MyKey, int>();
             eigenkey[new MyKey { Property1 = "Pietje", Property2 = 3 }] = 5;
 
@@ -138,7 +140,7 @@ namespace NETFOUNB.Tests
             metcomparer[new MyKey2 { Property1 = "Pietje" }] = 23;
 
             Assert.AreEqual(23, metcomparer[new MyKey2 { Property1 = "Pietje" }]);
-         }
+        }
 
         public void DezeVoldoetAanDeSignatuurVanDeForeachMethodeOpMijnList(int i)
         {
@@ -287,6 +289,61 @@ namespace NETFOUNB.Tests
                 a = b;
                 b = t;
             }
+        }
+
+        [TestMethod]
+        public void PLinqDemo()
+        {
+            int[] items = { 1, 4, 2, 5, 3, 4, 6, 3, 76, 45, 23, 3, 23, 65, 34, 34, 67, 345, 235, 74356, 345, 345, 2, 1234 };
+
+            Console.WriteLine("sequential:");
+            Console.WriteLine(string.Join(", ", items
+                .Where(i => i % 2 == 0)));
+
+            Console.WriteLine("parallel:");
+            Console.WriteLine(string.Join(", ", items
+                .AsParallel()
+                .AsOrdered()
+                .Where(i => i % 2 == 0)));
+        }
+
+        [TestMethod]
+        public void PLinqDemoPerf()
+        {
+            var r = new Random();
+            var items = Enumerable.Range(0, 100).Select(i => r.Next());
+
+            var sw = Stopwatch.StartNew();
+            Console.WriteLine("sequential:");
+            Func<int, bool> pred = i => { /*Thread.Sleep(1);*/ return i % 2 == 0; };
+            items.Where(pred).Last();
+            Console.WriteLine(sw.Elapsed);
+
+            sw.Restart();
+            Console.WriteLine("parallel:");
+            items.AsParallel().Where(pred).Last();
+            Console.WriteLine(sw.Elapsed);
+        }
+
+        private Lazy<IList<int>> _items = new Lazy<IList<int>>(() => new List<int>(), true);
+
+        public IList<int> Items
+        {
+            get
+            {
+                return _items.Value;
+            }
+        }
+
+
+        [TestMethod]
+        public void LazyInitializationDemo()
+        {
+            Items.Add(4);
+
+            Parallel.Invoke(
+                () => Items.Add(4), 
+                () => Items.Add(2));
         }
     }
 }
