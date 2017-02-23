@@ -51,8 +51,9 @@ namespace NETFOUNB.Tests
             var properties = t.GetProperties();
             foreach (var property in properties)
             {
-                var attributes = property.GetCustomAttributes(typeof(IdAttribute), false);
-                if (attributes.Length > 0)
+                var attributes = property
+                    .GetCustomAttributes<IdAttribute>();
+                if (attributes.Any())
                 {
                     return true;
                 }
@@ -91,6 +92,31 @@ namespace NETFOUNB.Tests
 
             field.SetValue(p, 32);
             Assert.IsTrue(p.ControleerLeeftijd(32));
+        }
+
+        [TestMethod]
+        public void InladenAssembly()
+        {
+            var assembly = Assembly.LoadFrom("NETFOUNB.dll");
+
+            var types = assembly.GetTypes();
+            Assert.AreEqual(1, types.Length);
+
+            var type = types.Single();
+            Assert.AreEqual("Class1", type.Name);
+            Assert.AreEqual("NETFOUNB.Class1", type.FullName);
+
+            var methods = type.GetMethods();
+            Assert.AreEqual(4, methods.Length);
+
+            var method = type.GetMethod("ToString");
+            Assert.IsNotNull(method);
+
+            var instance = Activator.CreateInstance(type);
+            Assert.IsNotNull(instance);
+
+            var result = method.Invoke(instance, null);
+            Assert.AreEqual("NETFOUNB.Class1", result);
         }
     }
 }
