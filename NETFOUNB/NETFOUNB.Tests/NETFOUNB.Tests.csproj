@@ -49,6 +49,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.identitymodel.services" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
@@ -72,11 +74,12 @@
     <Compile Include="FileIODemo.cs" />
     <Compile Include="LijstjesDemo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RBAC.cs" />
     <Compile Include="RegexDemo.cs" />
     <Compile Include="MonitoringProcesses.cs" />
     <Compile Include="DebugAndTrace.cs" />
     <Compile Include="ReflectionAndAttributesDemo.cs" />
-    <Compile Include="RBAC.cs" />
+    <Compile Include="RBACClaims.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NETFOUNB\NETFOUNB.csproj">
@@ -89,6 +92,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <None Include="App.config" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>

@@ -9,9 +9,10 @@ using System.Security;
 namespace NETFOUNB.Tests
 {
     [TestClass]
-    public class RBAC
+    public class RBACClaims
     {
         [TestMethod]
+        [ExpectedException(typeof(SecurityException))]
         public void TestMethod1()
         {
             DezeMethodeMagAlleenDoorAdministatorsWordenUitgevoerd();
